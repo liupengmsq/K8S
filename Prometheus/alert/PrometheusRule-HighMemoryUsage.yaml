@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: high-memory-alert
+  namespace: monitoring #必须要放到monitoring下面
+  labels:
+    release: prometheus #必须要匹配上
+spec:
+  groups:
+    - name: example-alerts
+      rules:
+        - alert: HighMemoryUsage  # 告警名称，与 AlertmanagerConfig 中匹配
+          expr: node_memory_Active_bytes / node_memory_MemTotal_bytes * 100 > 80
+          for: 5m
+          labels:
+            severity: warning
+            namespace: "monitoring" # 注意，这里必须必须要写上与你alertmanagerconfig对象相同的namespace，不然这个rule发到alertmanager上就会match不到alert的route。
+          annotations:
+            summary: "High memory usage detected on instance {{ $labels.instance }}"
+            description: "Memory usage is above 80% for more than 5 minutes on {{ $labels.instance }}. Current value: {{ $value }}%."

@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: slack-alert-config
+  namespace: monitoring
+spec:
+  route:
+    receiver: slack-receiver
+    groupBy: ['alertname']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 1h
+    matchers:
+      - name: alertname
+        matchType: =
+        value: HighCPUUsage
+  receivers:
+    - name: slack-receiver
+      slackConfigs:
+        - sendResolved: true
+          apiURL:
+            name: slack-webhook-secret
+            key: webhook
+          channel: '#kubernate'
+          title: 'my title'
+          text: 'my test'

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-prometheus-app
+  labels:
+    app: python-prometheus-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-prometheus-app
+  template:
+    metadata:
+      labels:
+        app: python-prometheus-app
+    spec:
+      containers:
+        - name: python-prometheus-app
+          image: demo_webservice:latest
+          imagePullPolicy: Never
+          env:
+            - name: PROMETHEUS_MULTIPROC_DIR
+              value: /tmp
+          ports:
+            - containerPort: 8081
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 10
+            periodSeconds: 10

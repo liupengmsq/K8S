@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: high-cpu-usage-rule
+  namespace: monitoring #必须要放到monitoring下面
+  labels:
+    release: prometheus #必须要匹配上
+spec:
+  groups:
+    - name: cpu-usage-alerts
+      rules:
+        - alert: HighCPUUsage
+          expr: (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 10
+          for: 2m
+          labels:
+            severity: warning
+            namespace: "monitoring" # 注意，这里必须必须要写上与你alertmanagerconfig对象相同的namespace，不然这个rule发到alertmanager上就会match不到alert的route。
+          annotations:
+            summary: "High CPU usage detected on {{ $labels.instance }}"
+            description: "CPU usage is above 70% for more than 2 minutes on instance {{ $labels.instance }}. Current value: {{ $value }}%."

@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: cpu-alert-email-config
+  namespace: monitoring
+  labels:
+    alertmanagerConfig: kube-prometheus
+spec:
+  route:
+    groupBy: ['alertname']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 1h
+    matchers:
+      - name: alertname
+        matchType: =
+        value: HighCPUUsage
+    receiver: email-receiver
+  receivers:
+    - name: email-receiver
+      emailConfigs:
+        - to: 'liupengmsq@hotmail.com'
+          from: 'liupengmsq@hotmail.com'
+          smarthost: 'smtp.example.com:587'
+          authUsername: 'liupengmsq@hotmail.com'
+          authPassword:
+            name: smtp-auth
+            key: password
+          requireTLS: true
+          html: |
+            <html>
+              <body>
+                <h2>High CPU Usage Alert</h2>
+                <p><strong>Alert Name:</strong> {{ .CommonLabels.alertname }}</p>
+                <p><strong>Severity:</strong> {{ .CommonLabels.severity }}</p>
+                <p><strong>Instance:</strong> {{ .CommonLabels.instance }}</p>
+                <p><strong>Cluster:</strong> {{ .CommonLabels.cluster }}</p>
+                <p><strong>Summary:</strong> {{ .CommonAnnotations.summary }}</p>
+                <p><strong>Description:</strong> {{ .CommonAnnotations.description }}</p>
+                <p><strong>Starts At:</strong> {{ .StartsAt }}</p>
+                <p><strong>Value:</strong> {{ .Value }}</p>
+                <hr />
+                <p>This alert is triggered when CPU usage exceeds 70% for more than 2 minutes.</p>
+              </body>
+            </html>

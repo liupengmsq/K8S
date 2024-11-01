@@ -1,0 +1,10 @@
+# 使用 Java 作为基础镜像
+FROM openjdk:11-jre-slim
+
+# 将 Spring Boot 应用程序的 jar 文件复制到镜像中
+ADD target/demo-0.0.1-SNAPSHOT.jar /opt/app/
+
+EXPOSE 9091
+
+# 设置启动命令
+ENTRYPOINT ["java", "-jar", "/opt/app/demo-0.0.1-SNAPSHOT.jar"]

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-app
+  labels:
+    app: springboot-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-app
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+    spec:
+      containers:
+        - name: springboot-app
+          image: java_springboot_service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9091  # Spring Boot 应用服务的端口
+          readinessProbe:
+            httpGet:
+              path: /actuator/health # 使用actuator自带的健康接口
+              port: 9091
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9091
+            initialDelaySeconds: 10
+            periodSeconds: 10

@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: springboot-app-monitor
+  namespace: default
+  labels:
+    release: prometheus # 这里必须与prometheus的podMonitorSelector的label匹配上
+spec:
+  selector:
+    matchLabels:
+      app: springboot-app
+  endpoints:
+    - port: http
+      interval: 5s
+      path: /actuator/prometheus
