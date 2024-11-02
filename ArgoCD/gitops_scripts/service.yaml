@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-argocd-service
+  namespace: argocd-app
+  labels:
+    app: python-argocd-app
+spec:
+  selector:
+    app: python-argocd-app
+  ports:
+    - name: http-metrics
+      protocol: TCP
+      port: 9999
+      targetPort: 9999
+  type: ClusterIP
