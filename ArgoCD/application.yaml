@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app                   # 应用名称
+  namespace: argocd              # ArgoCD 安装的命名空间（默认是 argocd）
+spec:
+  project: default               # ArgoCD 项目（默认是 default，可以自定义）
+  source:
+    repoURL: https://github.com/liupengmsq/K8S.git  # Git 仓库 URL
+    targetRevision: master         # 目标分支
+    path: ArgoCD/gitops_scripts    # 应用在 Git 仓库中的路径
+  destination:
+    server: https://kubernetes.default.svc  # 目标集群的 API server 地址（内部集群用 https://kubernetes.default.svc）
+    namespace: argocd-app           # 应用部署的目标命名空间
+  syncPolicy:
+    automated:                   # 同步策略设置为自动化
+      prune: true                # 在 Git 中资源被移除时，ArgoCD 会自动删除相应的 Kubernetes 资源
+      selfHeal: true             # 在集群中资源偏离 Git 中的定义时，自动纠正
