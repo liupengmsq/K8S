@@ -1,0 +1,22 @@
+microservices:
+  serviceA:
+    name: "backend-service-a"
+    image:
+      repository: argocd_demo_webservice_a
+      tag: "v1.0"
+      pullPolicy: IfNotPresent
+    replicaCount: 2
+    ports:
+      containerPort: 8111
+      servicePort: 8111
+
+  serviceB:
+    name: "backend-service-b"
+    image:
+      repository: argocd_demo_webservice_b
+      tag: "v1.0"
+      pullPolicy: IfNotPresent
+    replicaCount: 3
+    ports:
+      containerPort: 8112
+      servicePort: 8112

@@ -1,0 +1,19 @@
+{{- range $name, $service := .Values.microservices }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $service.name }}
+  namespace: argocd-app
+  labels:
+    app: {{ $service.name }}
+spec:
+  selector:
+    app: {{ $service.name }}
+  ports:
+    - name: http-metrics
+      protocol: TCP
+      port: {{ $service.ports.servicePort }}
+      targetPort: {{ $service.ports.containerPort }}
+  type: ClusterIP
+---
+{{- end }}

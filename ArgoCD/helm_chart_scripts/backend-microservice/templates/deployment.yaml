@@ -1,0 +1,38 @@
+{{- range $name, $service := .Values.microservices }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service.name }}
+  namespace: argocd-app
+  labels:
+    app: {{ $service.name }}
+spec:
+  replicas: {{ $service.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $service.name }}
+    spec:
+      containers:
+        - name: {{ $service.name }}
+          image: "{{ $service.image.repository }}:{{ $service.image.tag }}"
+          imagePullPolicy: {{ $service.image.pullPolicy }}
+          ports:
+            - containerPort: {{ $service.ports.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ $service.ports.containerPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ $service.ports.containerPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+{{- end }}
