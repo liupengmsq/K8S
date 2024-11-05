@@ -3,7 +3,7 @@ microservices:
     name: "backend-service-a"
     image:
       repository: argocd_demo_webservice_a
-      tag: "v1.0"
+      tag: "v1.1"
       pullPolicy: IfNotPresent
     replicaCount: 2
     ports:
